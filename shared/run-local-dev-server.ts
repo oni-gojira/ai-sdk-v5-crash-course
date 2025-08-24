@@ -39,8 +39,7 @@ const runHonoApp = async (opts: {
     const url = new URL(c.req.url);
 
     if (url.pathname.includes('favicon')) {
-      c.res = new Response('Not found', { status: 404 });
-      return;
+      return new Response('Not found', { status: 404 });
     }
 
     try {
@@ -55,25 +54,21 @@ const runHonoApp = async (opts: {
         mod[c.req.method.toUpperCase()];
 
       if (!handler) {
-        c.res = new Response('Not found', { status: 404 });
-        return;
+        return new Response('Not found', { status: 404 });
       }
 
-      c.res = await handler(c.req.raw);
-      return;
+      return await handler(c.req.raw);
     } catch (e) {
       if (
         e instanceof Error &&
         e.message.includes('Error when evaluating SSR module')
       ) {
-        c.res = new Response('Not found', { status: 404 });
-        return;
+        return new Response('Not found', { status: 404 });
       } else {
         console.error(e);
-        c.res = new Response('Internal server error', {
+        return new Response('Internal server error', {
           status: 500,
         });
-        return;
       }
     }
   });
